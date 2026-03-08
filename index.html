@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMP Docs — Universal Monetization Protocol</title>
+  <meta name="description" content="Full API reference and guides for the Universal Monetization Protocol — the payment rail for the autonomous agent economy.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <style>
+    :root {
+      --navy: #1A1A2E;
+      --navy-light: #22223f;
+      --red: #E94560;
+      --blue: #0F3460;
+      --teal: #16C79A;
+      --teal-dark: #0ea882;
+      --text: #1a1a2e;
+      --text-muted: #6b7280;
+      --text-light: #9ca3af;
+      --bg: #ffffff;
+      --bg-subtle: #f9fafb;
+      --bg-subtle2: #f3f4f6;
+      --border: #e5e7eb;
+      --border-light: #f3f4f6;
+      --sidebar-w: 272px;
+      --header-h: 60px;
+      --code-bg: #0d1117;
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    /* ── Header ── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      background: var(--navy);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      gap: 2rem;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .logo-mark {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--red), #ff6b6b);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 13px; color: white; letter-spacing: -0.5px;
+    }
+    .logo-text {
+      font-weight: 700; font-size: 1rem; color: white;
+    }
+    .logo-badge {
+      font-size: 11px; font-weight: 500;
+      background: rgba(22,199,154,0.2);
+      color: var(--teal);
+      border: 1px solid rgba(22,199,154,0.3);
+      padding: 2px 6px; border-radius: 4px;
+    }
+
+    .header-search {
+      flex: 1; max-width: 380px;
+      position: relative;
+    }
+    .header-search input {
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      padding: 7px 12px 7px 34px;
+      color: white;
+      font-size: 13.5px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .header-search input::placeholder { color: rgba(255,255,255,0.4); }
+    .header-search input:focus { border-color: rgba(22,199,154,0.5); }
+    .search-icon {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: rgba(255,255,255,0.4); font-size: 14px;
+    }
+
+    .header-links {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .header-links a {
+      color: rgba(255,255,255,0.65);
+      text-decoration: none; font-size: 13.5px;
+      transition: color 0.15s;
+    }
+    .header-links a:hover { color: white; }
+    .header-links .btn-api {
+      background: var(--teal);
+      color: var(--navy) !important;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    .header-links .btn-api:hover { background: var(--teal-dark); }
+
+    /* ── Layout ── */
+    .layout {
+      display: flex;
+      margin-top: var(--header-h);
+      min-height: calc(100vh - var(--header-h));
+    }
+
+    /* ── Sidebar ── */
+    aside {
+      width: var(--sidebar-w);
+      position: fixed;
+      top: var(--header-h);
+      bottom: 0;
+      left: 0;
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+      background: var(--bg-subtle);
+      padding: 1.5rem 0 2rem;
+    }
+
+    aside::-webkit-scrollbar { width: 4px; }
+    aside::-webkit-scrollbar-track { background: transparent; }
+    aside::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .nav-section {
+      margin-bottom: 1.5rem;
+    }
+    .nav-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      padding: 0 1.25rem;
+      margin-bottom: 0.4rem;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 6px 1.25rem;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 0;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all 0.12s;
+      margin: 1px 0;
+    }
+    .nav-link:hover {
+      color: var(--text);
+      background: var(--bg-subtle2);
+    }
+    .nav-link.active {
+      color: var(--navy);
+      font-weight: 600;
+      border-left-color: var(--teal);
+      background: rgba(22,199,154,0.06);
+    }
+    .nav-link .method-badge {
+      font-size: 10px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 1px 5px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .badge-get { background: rgba(59,130,246,0.12); color: #3b82f6; }
+    .badge-post { background: rgba(16,185,129,0.12); color: #10b981; }
+    .badge-patch { background: rgba(245,158,11,0.12); color: #f59e0b; }
+    .badge-delete { background: rgba(239,68,68,0.12); color: #ef4444; }
+
+    /* ── Main content ── */
+    main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      max-width: 900px;
+      padding: 2.5rem 3rem 4rem;
+    }
+
+    /* ── Section pages ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── Page header ── */
+    .page-eyebrow {
+      font-size: 12px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--teal); margin-bottom: 0.5rem;
+    }
+    .page-title {
+      font-size: 2rem; font-weight: 800;
+      color: var(--navy); line-height: 1.2;
+      margin-bottom: 0.75rem;
+    }
+    .page-desc {
+      font-size: 1.05rem; color: var(--text-muted);
+      max-width: 600px; line-height: 1.65;
+      margin-bottom: 2.5rem;
+    }
+    .page-divider {
+      border: none; border-top: 1px solid var(--border);
+      margin: 2.5rem 0;
+    }
+
+    /* ── Section headers ── */
+    h2 {
+      font-size: 1.35rem; font-weight: 700;
+      color: var(--navy); margin: 2.5rem 0 1rem;
+      padding-top: 0.5rem;
+    }
+    h3 {
+      font-size: 1.05rem; font-weight: 600;
+      color: var(--text); margin: 1.75rem 0 0.6rem;
+    }
+    p { color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.7; }
+    ul, ol { color: var(--text-muted); padding-left: 1.5rem; margin-bottom: 0.75rem; }
+    li { margin-bottom: 0.3rem; line-height: 1.65; }
+
+    /* ── Code ── */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: var(--bg-subtle2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+      color: var(--red);
+    }
+
+    .code-block {
+      margin: 1rem 0 1.5rem;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow);
+    }
+    .code-block-header {
+      background: #161b22;
+      padding: 8px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .code-lang {
+      font-size: 12px; font-weight: 500;
+      color: rgba(255,255,255,0.45);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .copy-btn {
+      font-size: 12px; color: rgba(255,255,255,0.4);
+      background: none; border: none; cursor: pointer;
+      font-family: inherit; padding: 2px 6px;
+      border-radius: 4px; transition: all 0.15s;
+    }
+    .copy-btn:hover { color: white; background: rgba(255,255,255,0.08); }
+    .copy-btn.copied { color: var(--teal); }
+
+    .code-block pre {
+      margin: 0 !important;
+      border-radius: 0 !important;
+      font-size: 13px !important;
+      line-height: 1.6 !important;
+      padding: 1.1rem 1.25rem !important;
+      background: var(--code-bg) !important;
+      overflow-x: auto;
+    }
+    .code-block pre code {
+      background: none !important;
+      border: none !important;
+      padding: 0 !important;
+      color: inherit !important;
+      font-size: inherit !important;
+    }
+
+    /* ── API endpoint cards ── */
+    .endpoint-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .endpoint-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .endpoint-header:hover { background: var(--bg-subtle2); }
+    .method-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; font-weight: 700;
+      padding: 3px 8px; border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .pill-get { background: rgba(59,130,246,0.1); color: #2563eb; border: 1px solid rgba(59,130,246,0.2); }
+    .pill-post { background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.2); }
+    .pill-patch { background: rgba(245,158,11,0.1); color: #d97706; border: 1px solid rgba(245,158,11,0.2); }
+    .pill-delete { background: rgba(239,68,68,0.1); color: #dc2626; border: 1px solid rgba(239,68,68,0.2); }
+
+    .endpoint-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px; font-weight: 500;
+      color: var(--text);
+    }
+    .endpoint-desc {
+      font-size: 13.5px; color: var(--text-muted); margin-left: auto;
+    }
+    .endpoint-body { padding: 1.25rem; }
+
+    /* ── Tables ── */
+    .param-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13.5px; margin: 0.75rem 0;
+    }
+    .param-table th {
+      text-align: left; padding: 8px 12px;
+      font-size: 11.5px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--text-light);
+      border-bottom: 1px solid var(--border);
+    }
+    .param-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: top;
+    }
+    .param-table tr:last-child td { border-bottom: none; }
+    .param-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px; color: var(--navy); font-weight: 500;
+    }
+    .param-type {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: var(--blue);
+    }
+    .param-req {
+      font-size: 11px; color: var(--red); font-weight: 600;
+    }
+    .param-opt {
+      font-size: 11px; color: var(--text-light);
+    }
+    .param-desc { color: var(--text-muted); font-size: 13px; }
+
+    /* ── Callouts ── */
+    .callout {
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
+      display: flex; gap: 0.75rem; align-items: flex-start;
+      font-size: 14px;
+    }
+    .callout-info {
+      background: rgba(59,130,246,0.05);
+      border: 1px solid rgba(59,130,246,0.2);
+      color: #1e40af;
+    }
+    .callout-tip {
+      background: rgba(22,199,154,0.05);
+      border: 1px solid rgba(22,199,154,0.2);
+      color: #065f46;
+    }
+    .callout-warn {
+      background: rgba(245,158,11,0.05);
+      border: 1px solid rgba(245,158,11,0.25);
+      color: #92400e;
+    }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Steps ── */
+    .steps { counter-reset: step; }
+    .step {
+      display: flex; gap: 1.25rem;
+      margin-bottom: 1.5rem;
+      counter-increment: step;
+    }
+    .step-num {
+      width: 28px; height: 28px;
+      background: var(--navy);
+      color: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-content h3 { margin-top: 0; margin-bottom: 0.4rem; }
+
+    /* ── Cards ── */
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0 1.5rem; }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      display: block;
+      background: var(--bg);
+    }
+    .card:hover {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(22,199,154,0.08);
+    }
+    .card-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .card-title { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 0.25rem; }
+    .card-desc { font-size: 13px; color: var(--text-muted); }
+
+    /* ── Concept pills ── */
+    .concept-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+    .concept-pill {
+      font-size: 12.5px; font-weight: 500;
+      padding: 4px 12px; border-radius: 100px;
+      background: var(--bg-subtle2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Search highlight ── */
+    .search-hidden { display: none !important; }
+    mark { background: rgba(22,199,154,0.2); color: inherit; }
+
+    /* ── Mobile ── */
+    .mobile-menu-btn {
+      display: none;
+      background: none; border: none;
+      color: white; font-size: 20px; cursor: pointer;
+      padding: 4px;
+    }
+
+    @media (max-width: 768px) {
+      aside { transform: translateX(-100%); transition: transform 0.2s; z-index: 50; }
+      aside.open { transform: translateX(0); }
+      main { margin-left: 0; padding: 1.5rem 1.25rem 3rem; }
+      .mobile-menu-btn { display: block; }
+      .card-grid { grid-template-columns: 1fr; }
+      .endpoint-desc { display: none; }
+      .header-search { max-width: 200px; }
+    }
+
+    /* ── Version tag ── */
+    .version-tag {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 12px; font-weight: 500;
+      background: rgba(233,69,96,0.08);
+      color: var(--red);
+      border: 1px solid rgba(233,69,96,0.2);
+      border-radius: 100px;
+      padding: 3px 10px;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header>
+  <button class="mobile-menu-btn" onclick="toggleMobile()">☰</button>
+  <a class="header-logo" href="#" onclick="navigate('overview')">
+    <div class="logo-mark">U</div>
+    <span class="logo-text">UMP</span>
+    <span class="logo-badge">Docs</span>
+  </a>
+  <div class="header-search">
+    <span class="search-icon">⌕</span>
+    <input type="text" placeholder="Search docs..." id="searchInput" oninput="handleSearch(this.value)">
+  </div>
+  <div class="header-links">
+    <a href="https://umpledger.com">Website</a>
+    <a href="https://umpledger.com/keys" class="btn-api">Get API Key →</a>
+  </div>
+</header>
+
+<!-- ── Sidebar ── -->
+<aside id="sidebar">
+  <div class="nav-section">
+    <div class="nav-section-title">Getting Started</div>
+    <a class="nav-link active" onclick="navigate('overview')">📖 Overview</a>
+    <a class="nav-link" onclick="navigate('quickstart')">⚡ Quickstart</a>
+    <a class="nav-link" onclick="navigate('concepts')">🧠 Concepts</a>
+    <a class="nav-link" onclick="navigate('authentication')">🔐 Authentication</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">API Reference</div>
+    <a class="nav-link" onclick="navigate('api-agents')">
+      Agents
+    </a>
+    <a class="nav-link" onclick="navigate('api-wallets')">Wallets</a>
+    <a class="nav-link" onclick="navigate('api-transactions')">Transactions</a>
+    <a class="nav-link" onclick="navigate('api-contracts')">Contracts</a>
+    <a class="nav-link" onclick="navigate('api-audit')">Audit</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">SDK Reference</div>
+    <a class="nav-link" onclick="navigate('sdk-install')">Installation</a>
+    <a class="nav-link" onclick="navigate('sdk-agents')">SDK — Agents</a>
+    <a class="nav-link" onclick="navigate('sdk-wallets')">SDK — Wallets</a>
+    <a class="nav-link" onclick="navigate('sdk-transactions')">SDK — Transactions</a>
+    <a class="nav-link" onclick="navigate('sdk-contracts')">SDK — Contracts</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Resources</div>
+    <a class="nav-link" onclick="navigate('errors')">Error Reference</a>
+    <a class="nav-link" onclick="navigate('changelog')">Changelog</a>
+  </div>
+</aside>
+
+<!-- ── Main ── -->
+<div class="layout">
+<main id="main">
+
+  <!-- ════════════════ OVERVIEW ════════════════ -->
+  <div class="page active" id="page-overview">
+    <div class="page-eyebrow">Documentation</div>
+    <h1 class="page-title">Universal Monetization Protocol</h1>
+    <p class="page-desc">The payment rail for the autonomous agent economy. UMP lets AI agents transact with each other — metering usage, enforcing pricing rules, settling payments, and maintaining full audit trails.</p>
+    <div class="version-tag">🔴 v2.0.0-alpha.1 · API Base: <code style="color:inherit;background:none;border:none;padding:0">https://api.umpledger.com/ump/v2</code></div>
+
+    <div class="card-grid">
+      <div class="card" onclick="navigate('quickstart')">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Quickstart</div>
+        <div class="card-desc">Make your first API call in under 5 minutes</div>
+      </div>
+      <div class="card" onclick="navigate('concepts')">
+        <div class="card-icon">🧠</div>
+        <div class="card-title">Concepts</div>
+        <div class="card-desc">Understand agents, wallets, contracts, and the transaction lifecycle</div>
+      </div>
+      <div class="card" onclick="navigate('api-agents')">
+        <div class="card-icon">📡</div>
+        <div class="card-title">API Reference</div>
+        <div class="card-desc">Full endpoint docs with request/response examples</div>
+      </div>
+      <div class="card" onclick="navigate('sdk-install')">
+        <div class="card-icon">📦</div>
+        <div class="card-title">SDK Reference</div>
+        <div class="card-desc">Use <code>@umpledger/sdk</code> in your TypeScript/Node project</div>
+      </div>
+    </div>
+
+    <h2>What is UMP?</h2>
+    <p>When AI agents work together — one agent calls another for data, computation, or services — they need a way to exchange value automatically without human intervention. UMP provides the infrastructure for this: identity, wallets, pricing rules, metering, settlement, and audit trails.</p>
+    <p>Think of UMP as Stripe for agent-to-agent transactions, but designed from the ground up for autonomous systems operating at machine speed.</p>
+
+    <h2>Core Concepts</h2>
+    <div class="concept-pills">
+      <span class="concept-pill">🤖 Agent Identity</span>
+      <span class="concept-pill">💳 Wallets</span>
+      <span class="concept-pill">📄 Contracts</span>
+      <span class="concept-pill">📊 Metering</span>
+      <span class="concept-pill">💰 Pricing Rules</span>
+      <span class="concept-pill">⚖️ Settlement</span>
+      <span class="concept-pill">🔍 Audit Trail</span>
+      <span class="concept-pill">🚨 Disputes</span>
+    </div>
+
+    <h2>Base URL</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-text">https://api.umpledger.com/ump/v2</code></pre>
+    </div>
+
+    <h2>Authentication</h2>
+    <p>All API requests (except <code>GET /health</code>) require an API key in the request header:</p>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">X-API-Key: your_api_key_here</code></pre>
+    </div>
+    <p>Get your API key at <a href="https://umpledger.com/keys" style="color:var(--teal)">umpledger.com/keys</a>.</p>
+  </div>
+
+  <!-- ════════════════ QUICKSTART ════════════════ -->
+  <div class="page" id="page-quickstart">
+    <div class="page-eyebrow">Getting Started</div>
+    <h1 class="page-title">Quickstart</h1>
+    <p class="page-desc">Get an agent transacting in under 5 minutes. This guide walks through creating two agents, funding one, and executing a transaction between them.</p>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">ℹ️</span>
+      <div>You need an API key to follow this guide. <a href="https://umpledger.com/keys" style="color:inherit;text-decoration:underline">Get one here →</a></div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Create two agents</h3>
+          <p>One agent will be the payer, the other the payee.</p>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-bash"># Create the payer agent
+curl -X POST https://api.umpledger.com/ump/v2/agents \
+  -H "X-API-Key: YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Research Agent",
+    "type": "AI_AGENT",
+    "capabilities": ["data.fetch", "analysis"],
+    "authority": {
+      "max_per_transaction": 100,
+      "max_per_day": 1000
+    }
+  }'
+
+# Response: { "agent_id": "agent_abc123", "wallet_id": "wal_xyz789", ... }</code></pre>
+          </div>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-bash"># Create the payee (service provider) agent
+curl -X POST https://api.umpledger.com/ump/v2/agents \
+  -H "X-API-Key: YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Data Provider Agent",
+    "type": "AI_AGENT",
+    "capabilities": ["data.serve"]
+  }'
+
+# Response: { "agent_id": "agent_def456", "wallet_id": "wal_uvw321", ... }</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Fund the payer's wallet</h3>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-bash">curl -X POST https://api.umpledger.com/ump/v2/wallets/wal_xyz789/fund \
+  -H "X-API-Key: YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 500,
+    "source": "stripe_pm_abc",
+    "value_unit_type": "USD_CENTS"
+  }'
+
+# Response: { "entry_id": "lge_...", "balance_after": 500 }</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Execute a transaction</h3>
+          <p>Use the high-level <code>/transact</code> endpoint to meter, rate, and settle in one call.</p>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-bash">curl -X POST https://api.umpledger.com/ump/v2/transact \
+  -H "X-API-Key: YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "from": "agent_abc123",
+    "to": "agent_def456",
+    "service": "data.fetch",
+    "payload": { "query": "market data Q1 2026", "tokens": 1200 },
+    "max_cost": 50
+  }'</code></pre>
+          </div>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-json">{
+  "transaction_id": "txn_a1b2c3d4",
+  "cost": 24,
+  "currency": "USD_CENTS",
+  "outcome": "SETTLED",
+  "audit_id": "aud_e5f6g7h8",
+  "settled_at": "2026-03-08T09:33:24.915Z",
+  "duration_ms": 42
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Check the balance</h3>
+          <div class="code-block">
+            <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-bash">curl https://api.umpledger.com/ump/v2/wallets/wal_xyz789/balance \
+  -H "X-API-Key: YOUR_KEY"
+
+# { "wallet_id": "wal_xyz789", "balances": [{ "available": 476, ... }] }</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-tip">
+      <span class="callout-icon">💡</span>
+      <div>For production use, create a <strong>Contract</strong> between agents first to set pricing rules explicitly. See the <a href="#" onclick="navigate('api-contracts')" style="color:inherit;text-decoration:underline">Contracts reference →</a></div>
+    </div>
+  </div>
+
+  <!-- ════════════════ CONCEPTS ════════════════ -->
+  <div class="page" id="page-concepts">
+    <div class="page-eyebrow">Getting Started</div>
+    <h1 class="page-title">Concepts</h1>
+    <p class="page-desc">Understanding the UMP model before you build will save a lot of time. Here's how the pieces fit together.</p>
+
+    <h2>Agent Identity</h2>
+    <p>Every participant in the UMP network is an <strong>Agent</strong> — an AI model, a microservice, a bot, or even a human-facing application. Agents have:</p>
+    <ul>
+      <li><strong>Agent ID</strong> — globally unique identifier (<code>agent_*</code>)</li>
+      <li><strong>Type</strong> — <code>AI_AGENT</code>, <code>HUMAN_DELEGATE</code>, or <code>SYSTEM</code></li>
+      <li><strong>Capabilities</strong> — what services the agent can provide or consume</li>
+      <li><strong>Authority Scope</strong> — spending limits enforced by the protocol</li>
+      <li><strong>Parent/Child hierarchy</strong> — agents can spawn sub-agents with restricted authority</li>
+    </ul>
+
+    <h2>Wallets</h2>
+    <p>Every agent automatically gets a <strong>Wallet</strong> when created. Wallets hold balances in multiple value unit types (USD, tokens, credits). Key operations:</p>
+    <ul>
+      <li><strong>Fund</strong> — top up from an external payment source</li>
+      <li><strong>Debit/Credit</strong> — happens automatically during settlement</li>
+      <li><strong>Freeze/Unfreeze</strong> — emergency controls</li>
+      <li><strong>Ledger</strong> — immutable record of every balance change</li>
+    </ul>
+
+    <h2>Contracts</h2>
+    <p>A <strong>Contract</strong> governs how two agents transact. It defines pricing rules, validity periods, and negotiation terms. Contracts can be:</p>
+    <ul>
+      <li><strong>FIXED</strong> — one party sets terms, other accepts</li>
+      <li><strong>DYNAMIC</strong> — back-and-forth negotiation (propose → counter → accept)</li>
+      <li><strong>SPOT</strong> — no contract, use default rates</li>
+    </ul>
+
+    <h2>The Transaction Lifecycle</h2>
+    <p>A UMP transaction goes through four stages:</p>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-text">METER → RATE → SETTLE → AUDIT
+
+1. METER    Record a usage event (what happened, how much)
+2. RATE     Apply pricing rules from the contract to get a cost
+3. SETTLE   Debit payer wallet, credit payee wallet atomically
+4. AUDIT    Write immutable record to the audit trail</code></pre>
+    </div>
+    <p>The <code>POST /transact</code> endpoint runs all four stages in one call. For advanced use cases, you can call each stage individually.</p>
+
+    <h2>Pricing Rules</h2>
+    <p>Pricing rules define how usage is billed. Supported models:</p>
+    <ul>
+      <li><strong>PER_UNIT</strong> — fixed price per unit (e.g., $0.01 per token)</li>
+      <li><strong>TIERED</strong> — price breaks at volume thresholds</li>
+      <li><strong>PERCENTAGE</strong> — take a % of a declared value</li>
+      <li><strong>FLAT_FEE</strong> — fixed fee per call regardless of usage</li>
+    </ul>
+
+    <h2>Authority Scopes</h2>
+    <div class="callout callout-warn">
+      <span class="callout-icon">⚠️</span>
+      <div>Transactions that exceed an agent's authority scope are automatically rejected before settlement. Always set <code>max_per_transaction</code> to prevent runaway spending.</div>
+    </div>
+  </div>
+
+  <!-- ════════════════ AUTHENTICATION ════════════════ -->
+  <div class="page" id="page-authentication">
+    <div class="page-eyebrow">Getting Started</div>
+    <h1 class="page-title">Authentication</h1>
+    <p class="page-desc">All UMP API requests are authenticated with an API key passed as a request header.</p>
+
+    <h2>API Key Header</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl https://api.umpledger.com/ump/v2/agents \
+  -H "X-API-Key: ump_live_your_key_here"</code></pre>
+    </div>
+
+    <h2>Unauthenticated response</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-json">{
+  "error": "AUTHENTICATION_REQUIRED",
+  "message": "Missing X-API-Key header. Get your key at https://umpledger.com/keys",
+  "docs": "https://umpledger.com/keys"
+}</code></pre>
+    </div>
+
+    <h2>Rate Limits</h2>
+    <p>The API allows <strong>1,000 requests per minute</strong> per API key. Rate limit headers are returned on every response:</p>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-text">X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 987
+X-RateLimit-Reset: 1709891234</code></pre>
+    </div>
+
+    <h2>Public endpoints</h2>
+    <p>The following endpoint does not require authentication:</p>
+    <ul>
+      <li><code>GET /health</code> — server health check</li>
+    </ul>
+  </div>
+
+  <!-- ════════════════ API: AGENTS ════════════════ -->
+  <div class="page" id="page-api-agents">
+    <div class="page-eyebrow">API Reference</div>
+    <h1 class="page-title">Agents</h1>
+    <p class="page-desc">Agents are the primary actors in the UMP network. Every agent has an identity, capabilities, spending limits, and an associated wallet.</p>
+
+    <!-- POST /agents -->
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-post">POST</span>
+        <span class="endpoint-path">/agents</span>
+        <span class="endpoint-desc">Create a new agent</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Creates a new Agent Identity and automatically provisions a wallet for it.</p>
+        <h3>Request body</h3>
+        <table class="param-table">
+          <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="param-name">name</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Human-readable display name</td></tr>
+            <tr><td><span class="param-name">type</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td class="param-desc"><code>AI_AGENT</code> (default), <code>HUMAN_DELEGATE</code>, <code>SYSTEM</code></td></tr>
+            <tr><td><span class="param-name">parent_id</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Agent ID of parent for hierarchy</td></tr>
+            <tr><td><span class="param-name">capabilities</span></td><td><span class="param-type">string[]</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Service identifiers this agent can provide/consume</td></tr>
+            <tr><td><span class="param-name">authority.max_per_transaction</span></td><td><span class="param-type">number</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Max spend per single transaction</td></tr>
+            <tr><td><span class="param-name">authority.max_per_day</span></td><td><span class="param-type">number</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Daily spending cap</td></tr>
+            <tr><td><span class="param-name">authority.max_per_month</span></td><td><span class="param-type">number</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Monthly spending cap</td></tr>
+          </tbody>
+        </table>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl -X POST https://api.umpledger.com/ump/v2/agents \
+  -H "X-API-Key: YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Research Agent",
+    "type": "AI_AGENT",
+    "capabilities": ["data.fetch", "analysis.run"],
+    "authority": {
+      "max_per_transaction": 100,
+      "max_per_day": 5000,
+      "max_per_month": 50000
+    }
+  }'</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">json — 201 Created</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-json">{
+  "agent_id": "agent_a1b2c3d4",
+  "agent_type": "AI_AGENT",
+  "display_name": "Research Agent",
+  "parent_id": null,
+  "capabilities": ["data.fetch", "analysis.run"],
+  "authority_scope": {
+    "max_per_transaction": 100,
+    "max_per_day": 5000,
+    "max_per_month": 50000,
+    "allowed_services": null,
+    "allowed_counterparties": null
+  },
+  "wallet_id": "wal_e5f6g7h8",
+  "status": "ACTIVE",
+  "created_at": "2026-03-08T09:33:24.915Z"
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- GET /agents/:id -->
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-get">GET</span>
+        <span class="endpoint-path">/agents/:id</span>
+        <span class="endpoint-desc">Get agent details</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Retrieve full details for an agent including its current wallet balance.</p>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl https://api.umpledger.com/ump/v2/agents/agent_a1b2c3d4 \
+  -H "X-API-Key: YOUR_KEY"</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- GET /agents -->
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-get">GET</span>
+        <span class="endpoint-path">/agents</span>
+        <span class="endpoint-desc">List agents</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <h3>Query parameters</h3>
+        <table class="param-table">
+          <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="param-name">parent_id</span></td><td><span class="param-type">string</span></td><td class="param-desc">Filter by parent agent</td></tr>
+            <tr><td><span class="param-name">type</span></td><td><span class="param-type">string</span></td><td class="param-desc">Filter by agent type</td></tr>
+            <tr><td><span class="param-name">status</span></td><td><span class="param-type">string</span></td><td class="param-desc"><code>ACTIVE</code>, <code>REVOKED</code></td></tr>
+          </tbody>
+        </table>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl "https://api.umpledger.com/ump/v2/agents?status=ACTIVE" \
+  -H "X-API-Key: YOUR_KEY"</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- PATCH /agents/:id/authority -->
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-patch">PATCH</span>
+        <span class="endpoint-path">/agents/:id/authority</span>
+        <span class="endpoint-desc">Update spending limits</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl -X PATCH https://api.umpledger.com/ump/v2/agents/agent_a1b2c3d4/authority \
+  -H "X-API-Key: YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "max_per_transaction": 250, "max_per_day": 10000 }'</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST /agents/:id/verify -->
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-post">POST</span>
+        <span class="endpoint-path">/agents/:id/verify</span>
+        <span class="endpoint-desc">Verify agent identity</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Verify that an agent is valid, active, and authorized to transact.</p>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl -X POST https://api.umpledger.com/ump/v2/agents/agent_a1b2c3d4/verify \
+  -H "X-API-Key: YOUR_KEY"</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-json">{ "agent_id": "agent_a1b2c3d4", "valid": true, "reason": null, "verified_at": "2026-03-08T..." }</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- DELETE /agents/:id -->
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-delete">DELETE</span>
+        <span class="endpoint-path">/agents/:id</span>
+        <span class="endpoint-desc">Revoke agent</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="callout callout-warn">
+          <span class="callout-icon">⚠️</span>
+          <div>Revoking an agent cascades to all child agents. This action cannot be undone.</div>
+        </div>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl -X DELETE https://api.umpledger.com/ump/v2/agents/agent_a1b2c3d4 \
+  -H "X-API-Key: YOUR_KEY"</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-json">{ "revoked_agents": ["agent_a1b2c3d4", "agent_child1"], "count": 2 }</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ API: WALLETS ════════════════ -->
+  <div class="page" id="page-api-wallets">
+    <div class="page-eyebrow">API Reference</div>
+    <h1 class="page-title">Wallets</h1>
+    <p class="page-desc">Every agent has a wallet. Wallets hold balances, track every transaction in a ledger, and can be frozen for emergency control.</p>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-post">POST</span>
+        <span class="endpoint-path">/wallets/:id/fund</span>
+        <span class="endpoint-desc">Fund a wallet</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <table class="param-table">
+          <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="param-name">amount</span></td><td><span class="param-type">number</span></td><td><span class="param-req">required</span></td><td class="param-desc">Amount to add</td></tr>
+            <tr><td><span class="param-name">source</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Payment source reference (e.g. Stripe payment method ID)</td></tr>
+            <tr><td><span class="param-name">value_unit_type</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td class="param-desc"><code>USD_CENTS</code> (default), <code>TOKENS</code>, <code>CREDITS</code></td></tr>
+          </tbody>
+        </table>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl -X POST https://api.umpledger.com/ump/v2/wallets/wal_e5f6g7h8/fund \
+  -H "X-API-Key: YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "amount": 10000, "source": "stripe_pm_abc123", "value_unit_type": "USD_CENTS" }'</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-get">GET</span>
+        <span class="endpoint-path">/wallets/:id/balance</span>
+        <span class="endpoint-desc">Get real-time balance</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl https://api.umpledger.com/ump/v2/wallets/wal_e5f6g7h8/balance \
+  -H "X-API-Key: YOUR_KEY"</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-json">{
+  "wallet_id": "wal_e5f6g7h8",
+  "frozen": false,
+  "balances": [{
+    "value_unit_type": "USD_CENTS",
+    "currency": "USD",
+    "amount": 10000,
+    "reserved": 0,
+    "available": 10000
+  }]
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-get">GET</span>
+        <span class="endpoint-path">/wallets/:id/ledger</span>
+        <span class="endpoint-desc">Get spending ledger</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <table class="param-table">
+          <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="param-name">limit</span></td><td><span class="param-type">number</span></td><td class="param-desc">Max entries to return (default 50)</td></tr>
+            <tr><td><span class="param-name">offset</span></td><td><span class="param-type">number</span></td><td class="param-desc">Pagination offset (default 0)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-post">POST</span>
+        <span class="endpoint-path">/wallets/:id/transfer</span>
+        <span class="endpoint-desc">Transfer to another wallet</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <table class="param-table">
+          <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="param-name">target_agent_id</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Recipient agent ID</td></tr>
+            <tr><td><span class="param-name">amount</span></td><td><span class="param-type">number</span></td><td><span class="param-req">required</span></td><td class="param-desc">Amount to transfer</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-post">POST</span>
+        <span class="endpoint-path">/wallets/:id/freeze</span>
+        <span class="endpoint-desc">Emergency freeze</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Immediately blocks all transactions. Use <code>POST /wallets/:id/unfreeze</code> to restore.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ API: TRANSACTIONS ════════════════ -->
+  <div class="page" id="page-api-transactions">
+    <div class="page-eyebrow">API Reference</div>
+    <h1 class="page-title">Transactions</h1>
+    <p class="page-desc">Execute value transfers between agents. Use the high-level <code>/transact</code> endpoint for most cases, or call each pipeline stage individually for advanced control.</p>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-post">POST</span>
+        <span class="endpoint-path">/transact</span>
+        <span class="endpoint-desc">Execute a full transaction</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Runs the full pipeline — meter → rate → settle → audit — in a single call. Recommended for most use cases.</p>
+        <table class="param-table">
+          <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="param-name">from</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Payer agent ID</td></tr>
+            <tr><td><span class="param-name">to</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Payee agent ID</td></tr>
+            <tr><td><span class="param-name">service</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Service identifier (e.g. <code>data.fetch</code>)</td></tr>
+            <tr><td><span class="param-name">payload</span></td><td><span class="param-type">object</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Service-specific metadata (tokens, bytes, etc.)</td></tr>
+            <tr><td><span class="param-name">max_cost</span></td><td><span class="param-type">number</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Cost ceiling — transaction aborts if exceeded</td></tr>
+          </tbody>
+        </table>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl -X POST https://api.umpledger.com/ump/v2/transact \
+  -H "X-API-Key: YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "from": "agent_a1b2c3d4",
+    "to": "agent_e5f6g7h8",
+    "service": "data.fetch",
+    "payload": { "tokens": 1200 },
+    "max_cost": 50
+  }'</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">json — 201 Created</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-json">{
+  "transaction_id": "txn_a1b2c3d4",
+  "cost": 24,
+  "currency": "USD_CENTS",
+  "outcome": "SETTLED",
+  "audit_id": "aud_e5f6g7h8",
+  "settled_at": "2026-03-08T09:33:24.915Z",
+  "duration_ms": 42
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-post">POST</span>
+        <span class="endpoint-path">/usage-events</span>
+        <span class="endpoint-desc">Submit raw usage events</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Record metering events without immediately settling. Use this when you need to batch events before rating.</p>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl -X POST https://api.umpledger.com/ump/v2/usage-events \
+  -H "X-API-Key: YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '[
+    {
+      "source_agent_id": "agent_a1b2c3d4",
+      "target_agent_id": "agent_e5f6g7h8",
+      "service_id": "llm.inference",
+      "quantity": 4200,
+      "unit": "tokens",
+      "contract_id": "ctr_xyz"
+    }
+  ]'</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-get">GET</span>
+        <span class="endpoint-path">/transactions/:id</span>
+        <span class="endpoint-desc">Get transaction details</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl https://api.umpledger.com/ump/v2/transactions/txn_a1b2c3d4 \
+  -H "X-API-Key: YOUR_KEY"</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ API: CONTRACTS ════════════════ -->
+  <div class="page" id="page-api-contracts">
+    <div class="page-eyebrow">API Reference</div>
+    <h1 class="page-title">Contracts</h1>
+    <p class="page-desc">Contracts define the pricing rules between two agents. Without a contract, UMP uses default spot rates. With a contract, you get explicit pricing, validity windows, and negotiation flows.</p>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-post">POST</span>
+        <span class="endpoint-path">/contracts</span>
+        <span class="endpoint-desc">Create a contract</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <table class="param-table">
+          <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="param-name">source_agent_id</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Proposing agent</td></tr>
+            <tr><td><span class="param-name">target_agent_id</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Counterparty agent</td></tr>
+            <tr><td><span class="param-name">mode</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc"><code>FIXED</code>, <code>DYNAMIC</code>, or <code>SPOT</code></td></tr>
+            <tr><td><span class="param-name">pricing_rules</span></td><td><span class="param-type">object[]</span></td><td><span class="param-req">required</span></td><td class="param-desc">Array of pricing rule objects</td></tr>
+            <tr><td><span class="param-name">effective_from</span></td><td><span class="param-type">ISO date</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Contract start date</td></tr>
+            <tr><td><span class="param-name">effective_until</span></td><td><span class="param-type">ISO date</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Contract expiry date</td></tr>
+          </tbody>
+        </table>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl -X POST https://api.umpledger.com/ump/v2/contracts \
+  -H "X-API-Key: YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source_agent_id": "agent_a1b2c3d4",
+    "target_agent_id": "agent_e5f6g7h8",
+    "mode": "FIXED",
+    "pricing_rules": [{
+      "service_id": "data.fetch",
+      "model": "PER_UNIT",
+      "unit": "tokens",
+      "price_per_unit": 0.02,
+      "currency": "USD_CENTS"
+    }],
+    "effective_until": "2027-01-01T00:00:00Z"
+  }'</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-post">POST</span>
+        <span class="endpoint-path">/contracts/negotiate</span>
+        <span class="endpoint-desc">Start dynamic negotiation</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Creates a <code>DYNAMIC</code> contract proposal. The counterparty can then accept or counter-propose via <code>/contracts/:id/accept</code> or <code>/contracts/:id/counter</code>.</p>
+      </div>
+    </div>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-get">GET</span>
+        <span class="endpoint-path">/contracts/:id</span>
+        <span class="endpoint-desc">Get contract details</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl https://api.umpledger.com/ump/v2/contracts/ctr_xyz \
+  -H "X-API-Key: YOUR_KEY"</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-delete">DELETE</span>
+        <span class="endpoint-path">/contracts/:id</span>
+        <span class="endpoint-desc">Terminate a contract</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Terminates the contract immediately. Existing settled transactions are unaffected.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ API: AUDIT ════════════════ -->
+  <div class="page" id="page-api-audit">
+    <div class="page-eyebrow">API Reference</div>
+    <h1 class="page-title">Audit Trail</h1>
+    <p class="page-desc">Every transaction automatically creates an immutable audit record. Query audit logs for compliance, debugging, and dispute resolution.</p>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-get">GET</span>
+        <span class="endpoint-path">/audit/:id</span>
+        <span class="endpoint-desc">Get audit record</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-bash">curl https://api.umpledger.com/ump/v2/audit/aud_e5f6g7h8 \
+  -H "X-API-Key: YOUR_KEY"</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code class="language-json">{
+  "audit_id": "aud_e5f6g7h8",
+  "transaction_id": "txn_a1b2c3d4",
+  "from_agent": "agent_a1b2c3d4",
+  "to_agent": "agent_e5f6g7h8",
+  "service": "data.fetch",
+  "amount": 24,
+  "currency": "USD_CENTS",
+  "outcome": "SETTLED",
+  "timestamp": "2026-03-08T09:33:24.915Z",
+  "immutable": true
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEndpoint(this)">
+        <span class="method-pill pill-get">GET</span>
+        <span class="endpoint-path">/audit</span>
+        <span class="endpoint-desc">List audit records</span>
+        <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
+      </div>
+      <div class="endpoint-body">
+        <table class="param-table">
+          <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="param-name">agent_id</span></td><td><span class="param-type">string</span></td><td class="param-desc">Filter by agent (payer or payee)</td></tr>
+            <tr><td><span class="param-name">from_date</span></td><td><span class="param-type">ISO date</span></td><td class="param-desc">Start of date range</td></tr>
+            <tr><td><span class="param-name">to_date</span></td><td><span class="param-type">ISO date</span></td><td class="param-desc">End of date range</td></tr>
+            <tr><td><span class="param-name">limit</span></td><td><span class="param-type">number</span></td><td class="param-desc">Max records (default 50)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ SDK: INSTALL ════════════════ -->
+  <div class="page" id="page-sdk-install">
+    <div class="page-eyebrow">SDK Reference</div>
+    <h1 class="page-title">SDK Installation</h1>
+    <p class="page-desc">The <code>@umpledger/sdk</code> package lets you embed UMP directly in your Node.js or TypeScript application — no HTTP calls needed.</p>
+
+    <h2>Install</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">npm install @umpledger/sdk</code></pre>
+    </div>
+
+    <h2>Initialize</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-typescript">import { UMP } from '@umpledger/sdk';
+
+const ump = new UMP({
+  // Optional config — defaults work for alpha
+});</code></pre>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">ℹ️</span>
+      <div>In the alpha, UMP runs in-process with in-memory state. Production releases will connect to <code>api.umpledger.com</code> automatically.</div>
+    </div>
+
+    <h2>Requirements</h2>
+    <ul>
+      <li>Node.js 18+</li>
+      <li>TypeScript 5+ (optional but recommended)</li>
+    </ul>
+  </div>
+
+  <!-- ════════════════ SDK: AGENTS ════════════════ -->
+  <div class="page" id="page-sdk-agents">
+    <div class="page-eyebrow">SDK Reference</div>
+    <h1 class="page-title">SDK — Agents</h1>
+    <p class="page-desc">Manage agent identities programmatically using the SDK.</p>
+
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-typescript">import { UMP } from '@umpledger/sdk';
+const ump = new UMP();
+
+// Create an agent
+const agent = ump.agents.create({
+  name: 'Research Agent',
+  type: 'AI_AGENT',
+  capabilities: ['data.fetch'],
+  authority: {
+    maxPerTransaction: 100,
+    maxPerDay: 5000,
+  },
+});
+
+console.log(agent.agentId); // "agent_a1b2c3d4"
+
+// Get an agent
+const found = ump.agents.get('agent_a1b2c3d4');
+
+// List agents
+const allAgents = ump.agents.list({ status: 'ACTIVE' });
+
+// Update authority
+const updated = ump.agents.updateAuthority('agent_a1b2c3d4', {
+  maxPerTransaction: 250,
+});
+
+// Verify an agent
+const result = ump.agents.verify('agent_a1b2c3d4');
+console.log(result.valid); // true
+
+// Revoke (cascades to children)
+const revoked = ump.agents.revoke('agent_a1b2c3d4');</code></pre>
+    </div>
+  </div>
+
+  <!-- ════════════════ SDK: WALLETS ════════════════ -->
+  <div class="page" id="page-sdk-wallets">
+    <div class="page-eyebrow">SDK Reference</div>
+    <h1 class="page-title">SDK — Wallets</h1>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-typescript">import { UMP } from '@umpledger/sdk';
+const ump = new UMP();
+
+// Fund a wallet
+const entry = ump.wallets.fund('wal_xyz', {
+  amount: 10000,
+  source: 'stripe_pm_abc',
+  valueUnitType: 'USD_CENTS',
+});
+
+// Get balance
+const balances = ump.wallets.getBalance('wal_xyz');
+console.log(balances[0].available); // 10000
+
+// Get ledger entries
+const ledger = ump.wallets.getLedger('wal_xyz', 50, 0);
+
+// Get wallet by agent
+const wallet = ump.wallets.getByAgent('agent_abc');
+
+// Freeze / Unfreeze
+ump.wallets.freeze('wal_xyz');
+ump.wallets.unfreeze('wal_xyz');
+
+// Transfer between agents
+ump.wallets.debit('wal_from', 100, 'agent_to', 'txn_ref');
+ump.wallets.credit('wal_to', 100, 'agent_from', 'txn_ref');</code></pre>
+    </div>
+  </div>
+
+  <!-- ════════════════ SDK: TRANSACTIONS ════════════════ -->
+  <div class="page" id="page-sdk-transactions">
+    <div class="page-eyebrow">SDK Reference</div>
+    <h1 class="page-title">SDK — Transactions</h1>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-typescript">import { UMP } from '@umpledger/sdk';
+const ump = new UMP();
+
+// High-level: meter + rate + settle in one call
+const result = await ump.transact({
+  from: 'agent_a1b2c3d4',
+  to: 'agent_e5f6g7h8',
+  service: 'data.fetch',
+  payload: { tokens: 1200 },
+  maxCost: 50,
+});
+
+console.log(result.transactionId); // "txn_..."
+console.log(result.cost);          // 24
+console.log(result.outcome);       // "SETTLED"
+
+// Low-level: record usage event
+const event = ump.metering.record({
+  sourceAgentId: 'agent_a1b2c3d4',
+  targetAgentId: 'agent_e5f6g7h8',
+  serviceId: 'data.fetch',
+  quantity: 1200,
+  unit: 'tokens',
+});
+
+// Rate against a pricing rule
+const ratingResult = ump.pricing.rate(rule, event);</code></pre>
+    </div>
+  </div>
+
+  <!-- ════════════════ SDK: CONTRACTS ════════════════ -->
+  <div class="page" id="page-sdk-contracts">
+    <div class="page-eyebrow">SDK Reference</div>
+    <h1 class="page-title">SDK — Contracts</h1>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-typescript">import { UMP } from '@umpledger/sdk';
+const ump = new UMP();
+
+// Create a fixed contract
+const contract = ump.contracts.create('agent_a1b2c3d4', {
+  targetAgentId: 'agent_e5f6g7h8',
+  mode: 'FIXED',
+  pricingRules: [{
+    serviceId: 'data.fetch',
+    model: 'PER_UNIT',
+    unit: 'tokens',
+    pricePerUnit: 0.02,
+    currency: 'USD_CENTS',
+  }],
+  effectiveUntil: new Date('2027-01-01'),
+});
+
+// Get a contract
+const found = ump.contracts.get('ctr_xyz');
+
+// Start negotiation
+const proposal = ump.contracts.propose('agent_a1b2c3d4', {
+  targetAgentId: 'agent_e5f6g7h8',
+  pricingRules: [...],
+});
+
+// Accept / counter
+ump.contracts.accept('ctr_xyz', 'agent_e5f6g7h8');
+ump.contracts.counter('ctr_xyz', 'agent_e5f6g7h8', { pricingRules: [...] });
+
+// Terminate
+ump.contracts.terminate('ctr_xyz');</code></pre>
+    </div>
+  </div>
+
+  <!-- ════════════════ ERRORS ════════════════ -->
+  <div class="page" id="page-errors">
+    <div class="page-eyebrow">Resources</div>
+    <h1 class="page-title">Error Reference</h1>
+    <p class="page-desc">UMP API errors always return a JSON body with <code>error</code> and <code>message</code> fields.</p>
+
+    <table class="param-table" style="margin-top:1.5rem">
+      <thead><tr><th>Error Code</th><th>HTTP</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><span class="param-name">AUTHENTICATION_REQUIRED</span></td><td>401</td><td class="param-desc">Missing or invalid API key</td></tr>
+        <tr><td><span class="param-name">AGENT_NOT_FOUND</span></td><td>404</td><td class="param-desc">Agent ID does not exist</td></tr>
+        <tr><td><span class="param-name">WALLET_NOT_FOUND</span></td><td>404</td><td class="param-desc">Wallet ID does not exist</td></tr>
+        <tr><td><span class="param-name">INSUFFICIENT_FUNDS</span></td><td>402</td><td class="param-desc">Wallet balance too low for transaction</td></tr>
+        <tr><td><span class="param-name">AUTHORITY_EXCEEDED</span></td><td>403</td><td class="param-desc">Transaction exceeds agent's spending limit</td></tr>
+        <tr><td><span class="param-name">WALLET_FROZEN</span></td><td>403</td><td class="param-desc">Wallet is frozen — all transactions blocked</td></tr>
+        <tr><td><span class="param-name">CONTRACT_NOT_FOUND</span></td><td>404</td><td class="param-desc">Contract ID does not exist</td></tr>
+        <tr><td><span class="param-name">CONTRACT_EXPIRED</span></td><td>410</td><td class="param-desc">Contract is past its effective_until date</td></tr>
+        <tr><td><span class="param-name">MAX_COST_EXCEEDED</span></td><td>402</td><td class="param-desc">Transaction cost exceeded the max_cost ceiling</td></tr>
+        <tr><td><span class="param-name">RATE_LIMIT_EXCEEDED</span></td><td>429</td><td class="param-desc">Too many requests — 1000/minute limit reached</td></tr>
+        <tr><td><span class="param-name">VALIDATION_ERROR</span></td><td>400</td><td class="param-desc">Request body failed schema validation</td></tr>
+        <tr><td><span class="param-name">INTERNAL_ERROR</span></td><td>500</td><td class="param-desc">Unexpected server error</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Error response format</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-json">{
+  "error": "INSUFFICIENT_FUNDS",
+  "message": "Wallet wal_xyz has insufficient balance. Available: 10, Required: 50",
+  "docs": "https://docs.umpledger.com"
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- ════════════════ CHANGELOG ════════════════ -->
+  <div class="page" id="page-changelog">
+    <div class="page-eyebrow">Resources</div>
+    <h1 class="page-title">Changelog</h1>
+
+    <h2>v2.0.0-alpha.1 — March 2026</h2>
+    <p>Initial public alpha release.</p>
+    <ul>
+      <li>Agent identity management (create, list, verify, revoke)</li>
+      <li>Wallet system with fund, balance, ledger, freeze/unfreeze, transfer</li>
+      <li>Full transaction pipeline: <code>/transact</code>, <code>/usage-events</code>, <code>/rate</code>, <code>/settle</code></li>
+      <li>Contract management with fixed, dynamic, and spot modes</li>
+      <li>Immutable audit trail</li>
+      <li>Dispute submission and tracking</li>
+      <li><code>@umpledger/sdk</code> npm package</li>
+      <li>Live API at <code>api.umpledger.com</code></li>
+    </ul>
+  </div>
+
+</main>
+</div>
+
+<script>
+  // ── Navigation ──
+  function navigate(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+
+    const target = document.getElementById('page-' + page);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.nav-link').forEach(l => {
+      if (l.getAttribute('onclick')?.includes(`'${page}'`)) {
+        l.classList.add('active');
+      }
+    });
+
+    window.scrollTo(0, 0);
+    if (window.innerWidth < 768) {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+  }
+
+  // ── Toggle endpoint cards ──
+  function toggleEndpoint(header) {
+    const body = header.nextElementSibling;
+    const arrow = header.querySelector('span:last-child');
+    if (body.style.display === 'none') {
+      body.style.display = 'block';
+      arrow.textContent = '▼';
+    } else {
+      body.style.display = 'none';
+      arrow.textContent = '▶';
+    }
+  }
+
+  // ── Copy code ──
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre code');
+    navigator.clipboard.writeText(pre.textContent).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // ── Search ──
+  function handleSearch(query) {
+    const q = query.toLowerCase().trim();
+    if (!q) {
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('search-hidden'));
+      return;
+    }
+    document.querySelectorAll('.nav-link').forEach(link => {
+      const text = link.textContent.toLowerCase();
+      const onclick = link.getAttribute('onclick') || '';
+      link.classList.toggle('search-hidden', !text.includes(q) && !onclick.includes(q));
+    });
+  }
+
+  // ── Mobile ──
+  function toggleMobile() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  // ── Init ──
+  document.addEventListener('DOMContentLoaded', () => {
+    hljs.highlightAll();
+
+    // Handle hash routing
+    const hash = window.location.hash.slice(1);
+    if (hash) navigate(hash);
+  });
+</script>
+</body>
+</html>
