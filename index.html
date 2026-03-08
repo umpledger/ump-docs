@@ -289,15 +289,32 @@
       line-height: 1.6 !important;
       padding: 1.1rem 1.25rem !important;
       background: var(--code-bg) !important;
+      color: #e6edf3 !important;
       overflow-x: auto;
     }
     .code-block pre code {
       background: none !important;
       border: none !important;
       padding: 0 !important;
-      color: inherit !important;
+      color: #e6edf3 !important;
       font-size: inherit !important;
     }
+    /* Ensure highlight.js token colors override the base on dark bg */
+    .code-block .hljs { background: transparent !important; color: #e6edf3 !important; }
+    .code-block .hljs-comment, .code-block .hljs-quote { color: #8b949e !important; }
+    .code-block .hljs-variable, .code-block .hljs-template-variable,
+    .code-block .hljs-tag, .code-block .hljs-name, .code-block .hljs-selector-id,
+    .code-block .hljs-selector-class, .code-block .hljs-regexp, .code-block .hljs-deletion { color: #ffa657 !important; }
+    .code-block .hljs-number, .code-block .hljs-built_in, .code-block .hljs-literal,
+    .code-block .hljs-type, .code-block .hljs-params, .code-block .hljs-meta,
+    .code-block .hljs-link { color: #79c0ff !important; }
+    .code-block .hljs-attribute { color: #ffa657 !important; }
+    .code-block .hljs-string, .code-block .hljs-symbol, .code-block .hljs-bullet,
+    .code-block .hljs-addition { color: #a5d6ff !important; }
+    .code-block .hljs-title, .code-block .hljs-section { color: #d2a8ff !important; }
+    .code-block .hljs-keyword, .code-block .hljs-selector-tag { color: #ff7b72 !important; }
+    .code-block .hljs-emphasis { font-style: italic; }
+    .code-block .hljs-strong { font-weight: bold; }
 
     /* ── API endpoint cards ── */
     .endpoint-card {
