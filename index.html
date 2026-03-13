@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UMP Docs — Universal Monetization Protocol</title>
-  <meta name="description" content="Full API reference and guides for the Universal Monetization Protocol — the payment rail for the autonomous agent economy.">
+  <meta name="description" content="Full API reference and guides for the Universal Monetization Protocol — settlement orchestration for the autonomous agent economy.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
@@ -559,7 +559,7 @@
   <div class="page active" id="page-overview">
     <div class="page-eyebrow">Documentation</div>
     <h1 class="page-title">Universal Monetization Protocol</h1>
-    <p class="page-desc">The payment rail for the autonomous agent economy. UMP lets AI agents transact with each other — metering usage, enforcing pricing rules, settling payments, and maintaining full audit trails.</p>
+    <p class="page-desc">Settlement orchestration for the autonomous agent economy. UMP determines who gets paid, how much, and in what order, then signals external payment rails (Stripe, Visa, ACH, stablecoins) to execute. It meters usage, enforces pricing rules, orchestrates settlement, and maintains full audit trails.</p>
     <div class="version-tag">🔴 v2.0.0-alpha.1 · API Base: <code style="color:inherit;background:none;border:none;padding:0">https://api.umpledger.com/ump/v2</code></div>
 
     <div class="card-grid">
@@ -586,8 +586,8 @@
     </div>
 
     <h2>What is UMP?</h2>
-    <p>When AI agents work together — one agent calls another for data, computation, or services — they need a way to exchange value automatically without human intervention. UMP provides the infrastructure for this: identity, wallets, pricing rules, metering, settlement, and audit trails.</p>
-    <p>Think of UMP as Stripe for agent-to-agent transactions, but designed from the ground up for autonomous systems operating at machine speed.</p>
+    <p>When AI agents work together — one agent calls another for data, computation, or services — they need a way to govern value exchange automatically without human intervention. UMP provides that governance layer: identity, wallets, pricing rules, metering, settlement orchestration, and audit trails.</p>
+    <p>Think of UMP as the settlement orchestration layer sitting above payment rails like Stripe or ACH — it decides who gets paid, how much, and when, then delegates the actual money movement to the rail you choose.</p>
 
     <h2>Core Concepts</h2>
     <div class="concept-pills">
@@ -692,7 +692,7 @@ curl -X POST https://api.umpledger.com/ump/v2/agents \
         <div class="step-num">3</div>
         <div class="step-content">
           <h3>Execute a transaction</h3>
-          <p>Use the high-level <code>/transact</code> endpoint to meter, rate, and settle in one call.</p>
+          <p>Use the high-level <code>/transact</code> endpoint to meter, rate, and orchestrate settlement in one call.</p>
           <div class="code-block">
             <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-bash">curl -X POST https://api.umpledger.com/ump/v2/transact \
@@ -779,12 +779,14 @@ curl -X POST https://api.umpledger.com/ump/v2/agents \
     <p>A UMP transaction goes through four stages:</p>
     <div class="code-block">
       <div class="code-block-header"><span class="code-lang">text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-      <pre><code class="language-text">METER → RATE → SETTLE → AUDIT
+      <pre><code class="language-text">METER → RATE → ORCHESTRATE → AUDIT
 
-1. METER    Record a usage event (what happened, how much)
-2. RATE     Apply pricing rules from the contract to get a cost
-3. SETTLE   Debit payer wallet, credit payee wallet atomically
-4. AUDIT    Write immutable record to the audit trail</code></pre>
+1. METER       Record a usage event (what happened, how much)
+2. RATE        Apply pricing rules from the contract to get a cost
+3. ORCHESTRATE Determine who gets paid, how much, in what order.
+               Enforce policies. Signal external rail to execute.
+               (Actual money movement: Stripe / Visa / ACH / stablecoin)
+4. AUDIT       Write immutable record to the audit trail</code></pre>
     </div>
     <p>The <code>POST /transact</code> endpoint runs all four stages in one call. For advanced use cases, you can call each stage individually.</p>
 
@@ -1147,7 +1149,7 @@ X-RateLimit-Reset: 1709891234</code></pre>
         <span style="margin-left:auto;color:var(--text-light);font-size:13px">▼</span>
       </div>
       <div class="endpoint-body">
-        <p>Runs the full pipeline — meter → rate → settle → audit — in a single call. Recommended for most use cases.</p>
+        <p>Runs the full pipeline — meter → rate → orchestrate → audit — in a single call. UMP computes who owes what, enforces policies, and signals the payment rail to execute. Recommended for most use cases.</p>
         <table class="param-table">
           <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
           <tbody>
@@ -1500,7 +1502,7 @@ ump.wallets.credit('wal_to', 100, 'agent_from', 'txn_ref');</code></pre>
       <pre><code class="language-typescript">import { UMP } from '@umpledger/sdk';
 const ump = new UMP();
 
-// High-level: meter + rate + settle in one call
+// High-level: meter + rate + orchestrate settlement in one call
 const result = await ump.transact({
   from: 'agent_a1b2c3d4',
   to: 'agent_e5f6g7h8',
