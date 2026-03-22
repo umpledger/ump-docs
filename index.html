@@ -545,6 +545,11 @@
     <a class="nav-link" onclick="navigate('sdk-contracts')">SDK — Contracts</a>
   </div>
   <div class="nav-section">
+    <div class="nav-section-title">Integrations</div>
+    <a class="nav-link" onclick="navigate('local-testing')">🖥️ Local Testing</a>
+    <a class="nav-link" onclick="navigate('mcp-integration')">🔌 MCP Integration</a>
+  </div>
+  <div class="nav-section">
     <div class="nav-section-title">Resources</div>
     <a class="nav-link" onclick="navigate('errors')">Error Reference</a>
     <a class="nav-link" onclick="navigate('changelog')">Changelog</a>
@@ -641,15 +646,15 @@ curl -X POST https://api.umpledger.com/ump/v2/agents \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Research Agent",
-    "type": "AI_AGENT",
+    "agent_type": "AI_AGENT",
     "capabilities": ["data.fetch", "analysis"],
     "authority": {
-      "max_per_transaction": 100,
-      "max_per_day": 1000
+      "maxPerTransaction": 100,
+      "maxPerDay": 1000
     }
   }'
 
-# Response: { "agent_id": "agent_abc123", "wallet_id": "wal_xyz789", ... }</code></pre>
+# Response: { "agent_id": "agent_abc123", "wallet_id": "wallet_xyz789", ... }</code></pre>
           </div>
           <div class="code-block">
             <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -659,11 +664,11 @@ curl -X POST https://api.umpledger.com/ump/v2/agents \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Data Provider Agent",
-    "type": "AI_AGENT",
+    "agent_type": "AI_AGENT",
     "capabilities": ["data.serve"]
   }'
 
-# Response: { "agent_id": "agent_def456", "wallet_id": "wal_uvw321", ... }</code></pre>
+# Response: { "agent_id": "agent_def456", "wallet_id": "wallet_uvw321", ... }</code></pre>
           </div>
         </div>
       </div>
@@ -674,16 +679,15 @@ curl -X POST https://api.umpledger.com/ump/v2/agents \
           <h3>Fund the payer's wallet</h3>
           <div class="code-block">
             <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code class="language-bash">curl -X POST https://api.umpledger.com/ump/v2/wallets/wal_xyz789/fund \
+            <pre><code class="language-bash">curl -X POST https://api.umpledger.com/ump/v2/wallets/wallet_xyz789/fund \
   -H "X-API-Key: YOUR_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "amount": 500,
-    "source": "stripe_pm_abc",
-    "value_unit_type": "USD_CENTS"
+    "amount": 100,
+    "currency": "USD"
   }'
 
-# Response: { "entry_id": "lge_...", "balance_after": 500 }</code></pre>
+# Response: { "wallet_id": "wallet_xyz789", "balance": 100, "currency": "USD", "status": "ACTIVE" }</code></pre>
           </div>
         </div>
       </div>
@@ -710,12 +714,12 @@ curl -X POST https://api.umpledger.com/ump/v2/agents \
             <div class="code-block-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-json">{
   "transaction_id": "txn_a1b2c3d4",
-  "cost": 24,
-  "currency": "USD_CENTS",
-  "outcome": "SETTLED",
-  "audit_id": "aud_e5f6g7h8",
-  "settled_at": "2026-03-08T09:33:24.915Z",
-  "duration_ms": 42
+  "cost": 5,
+  "currency": "USD",
+  "outcome": "COMPLETED",
+  "audit_id": "audit_e5f6g7h8",
+  "settled_at": "2026-03-17T19:11:19.494Z",
+  "duration_ms": 0
 }</code></pre>
           </div>
         </div>
@@ -727,10 +731,10 @@ curl -X POST https://api.umpledger.com/ump/v2/agents \
           <h3>Check the balance</h3>
           <div class="code-block">
             <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code class="language-bash">curl https://api.umpledger.com/ump/v2/wallets/wal_xyz789/balance \
+            <pre><code class="language-bash">curl https://api.umpledger.com/ump/v2/wallets/wallet_xyz789/balance \
   -H "X-API-Key: YOUR_KEY"
 
-# { "wallet_id": "wal_xyz789", "balances": [{ "available": 476, ... }] }</code></pre>
+# { "wallet_id": "wallet_xyz789", "balance": 95, "currency": "USD", "status": "ACTIVE" }</code></pre>
           </div>
         </div>
       </div>
@@ -881,12 +885,11 @@ X-RateLimit-Reset: 1709891234</code></pre>
   -H "Content-Type: application/json" \
   -d '{
     "name": "Research Agent",
-    "type": "AI_AGENT",
+    "agent_type": "AI_AGENT",
     "capabilities": ["data.fetch", "analysis.run"],
     "authority": {
-      "max_per_transaction": 100,
-      "max_per_day": 5000,
-      "max_per_month": 50000
+      "maxPerTransaction": 100,
+      "maxPerDay": 5000
     }
   }'</code></pre>
         </div>
@@ -894,20 +897,16 @@ X-RateLimit-Reset: 1709891234</code></pre>
           <div class="code-block-header"><span class="code-lang">json — 201 Created</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
           <pre><code class="language-json">{
   "agent_id": "agent_a1b2c3d4",
+  "name": "Research Agent",
   "agent_type": "AI_AGENT",
-  "display_name": "Research Agent",
-  "parent_id": null,
   "capabilities": ["data.fetch", "analysis.run"],
-  "authority_scope": {
-    "max_per_transaction": 100,
-    "max_per_day": 5000,
-    "max_per_month": 50000,
-    "allowed_services": null,
-    "allowed_counterparties": null
+  "authority": {
+    "maxPerTransaction": 100,
+    "maxPerDay": 5000
   },
-  "wallet_id": "wal_e5f6g7h8",
+  "wallet_id": "wallet_e5f6g7h8",
   "status": "ACTIVE",
-  "created_at": "2026-03-08T09:33:24.915Z"
+  "created_at": "2026-03-17T10:00:00.000Z"
 }</code></pre>
         </div>
       </div>
@@ -1041,17 +1040,16 @@ X-RateLimit-Reset: 1709891234</code></pre>
         <table class="param-table">
           <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><span class="param-name">amount</span></td><td><span class="param-type">number</span></td><td><span class="param-req">required</span></td><td class="param-desc">Amount to add</td></tr>
-            <tr><td><span class="param-name">source</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Payment source reference (e.g. Stripe payment method ID)</td></tr>
-            <tr><td><span class="param-name">value_unit_type</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td class="param-desc"><code>USD_CENTS</code> (default), <code>TOKENS</code>, <code>CREDITS</code></td></tr>
+            <tr><td><span class="param-name">amount</span></td><td><span class="param-type">number</span></td><td><span class="param-req">required</span></td><td class="param-desc">Amount to add in USD</td></tr>
+            <tr><td><span class="param-name">currency</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Currency code (e.g. <code>USD</code>)</td></tr>
           </tbody>
         </table>
         <div class="code-block">
           <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><code class="language-bash">curl -X POST https://api.umpledger.com/ump/v2/wallets/wal_e5f6g7h8/fund \
+          <pre><code class="language-bash">curl -X POST https://api.umpledger.com/ump/v2/wallets/wallet_e5f6g7h8/fund \
   -H "X-API-Key: YOUR_KEY" \
   -H "Content-Type: application/json" \
-  -d '{ "amount": 10000, "source": "stripe_pm_abc123", "value_unit_type": "USD_CENTS" }'</code></pre>
+  -d '{ "amount": 100, "currency": "USD" }'</code></pre>
         </div>
       </div>
     </div>
@@ -1066,21 +1064,16 @@ X-RateLimit-Reset: 1709891234</code></pre>
       <div class="endpoint-body">
         <div class="code-block">
           <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><code class="language-bash">curl https://api.umpledger.com/ump/v2/wallets/wal_e5f6g7h8/balance \
+          <pre><code class="language-bash">curl https://api.umpledger.com/ump/v2/wallets/wallet_e5f6g7h8/balance \
   -H "X-API-Key: YOUR_KEY"</code></pre>
         </div>
         <div class="code-block">
           <div class="code-block-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
           <pre><code class="language-json">{
-  "wallet_id": "wal_e5f6g7h8",
-  "frozen": false,
-  "balances": [{
-    "value_unit_type": "USD_CENTS",
-    "currency": "USD",
-    "amount": 10000,
-    "reserved": 0,
-    "available": 10000
-  }]
+  "wallet_id": "wallet_e5f6g7h8",
+  "balance": 100,
+  "currency": "USD",
+  "status": "ACTIVE"
 }</code></pre>
         </div>
       </div>
@@ -1155,9 +1148,9 @@ X-RateLimit-Reset: 1709891234</code></pre>
           <tbody>
             <tr><td><span class="param-name">from</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Payer agent ID</td></tr>
             <tr><td><span class="param-name">to</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Payee agent ID</td></tr>
-            <tr><td><span class="param-name">service</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Service identifier (e.g. <code>data.fetch</code>)</td></tr>
-            <tr><td><span class="param-name">payload</span></td><td><span class="param-type">object</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Service-specific metadata (tokens, bytes, etc.)</td></tr>
-            <tr><td><span class="param-name">max_cost</span></td><td><span class="param-type">number</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Cost ceiling — transaction aborts if exceeded</td></tr>
+            <tr><td><span class="param-name">contract_id</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Contract ID governing the pricing rules</td></tr>
+            <tr><td><span class="param-name">service</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Service identifier matching contract service_name</td></tr>
+            <tr><td><span class="param-name">payload</span></td><td><span class="param-type">object</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Service-specific metadata (e.g. <code>{"application_id": "loan_001"}</code>)</td></tr>
           </tbody>
         </table>
         <div class="code-block">
@@ -1168,21 +1161,21 @@ X-RateLimit-Reset: 1709891234</code></pre>
   -d '{
     "from": "agent_a1b2c3d4",
     "to": "agent_e5f6g7h8",
-    "service": "data.fetch",
-    "payload": { "tokens": 1200 },
-    "max_cost": 50
+    "contract_id": "contract_a1b2c3d4",
+    "service": "data-fetch",
+    "payload": { "application_id": "app_001" }
   }'</code></pre>
         </div>
         <div class="code-block">
           <div class="code-block-header"><span class="code-lang">json — 201 Created</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
           <pre><code class="language-json">{
   "transaction_id": "txn_a1b2c3d4",
-  "cost": 24,
-  "currency": "USD_CENTS",
-  "outcome": "SETTLED",
-  "audit_id": "aud_e5f6g7h8",
-  "settled_at": "2026-03-08T09:33:24.915Z",
-  "duration_ms": 42
+  "cost": 5,
+  "currency": "USD",
+  "outcome": "COMPLETED",
+  "audit_id": "audit_e5f6g7h8",
+  "settled_at": "2026-03-17T19:11:19.494Z",
+  "duration_ms": 0
 }</code></pre>
         </div>
       </div>
@@ -1250,12 +1243,10 @@ X-RateLimit-Reset: 1709891234</code></pre>
         <table class="param-table">
           <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><span class="param-name">source_agent_id</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Proposing agent</td></tr>
-            <tr><td><span class="param-name">target_agent_id</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Counterparty agent</td></tr>
-            <tr><td><span class="param-name">mode</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc"><code>FIXED</code>, <code>DYNAMIC</code>, or <code>SPOT</code></td></tr>
-            <tr><td><span class="param-name">pricing_rules</span></td><td><span class="param-type">object[]</span></td><td><span class="param-req">required</span></td><td class="param-desc">Array of pricing rule objects</td></tr>
-            <tr><td><span class="param-name">effective_from</span></td><td><span class="param-type">ISO date</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Contract start date</td></tr>
-            <tr><td><span class="param-name">effective_until</span></td><td><span class="param-type">ISO date</span></td><td><span class="param-opt">optional</span></td><td class="param-desc">Contract expiry date</td></tr>
+            <tr><td><span class="param-name">source_agent_id</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Paying agent (payer)</td></tr>
+            <tr><td><span class="param-name">target_agent_id</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Receiving agent (payee)</td></tr>
+            <tr><td><span class="param-name">service_name</span></td><td><span class="param-type">string</span></td><td><span class="param-req">required</span></td><td class="param-desc">Service identifier (e.g. <code>fraud-risk-check</code>)</td></tr>
+            <tr><td><span class="param-name">pricing_rules</span></td><td><span class="param-type">object[]</span></td><td><span class="param-req">required</span></td><td class="param-desc">Array of pricing rule objects. Each rule: <code>{"primitive": "FLAT_FEE", "amount": 5.00, "currency": "USD"}</code></td></tr>
           </tbody>
         </table>
         <div class="code-block">
@@ -1266,15 +1257,12 @@ X-RateLimit-Reset: 1709891234</code></pre>
   -d '{
     "source_agent_id": "agent_a1b2c3d4",
     "target_agent_id": "agent_e5f6g7h8",
-    "mode": "FIXED",
+    "service_name": "data-fetch",
     "pricing_rules": [{
-      "service_id": "data.fetch",
-      "model": "PER_UNIT",
-      "unit": "tokens",
-      "price_per_unit": 0.02,
-      "currency": "USD_CENTS"
-    }],
-    "effective_until": "2027-01-01T00:00:00Z"
+      "primitive": "FLAT_FEE",
+      "amount": 5.00,
+      "currency": "USD"
+    }]
   }'</code></pre>
         </div>
       </div>
@@ -1343,15 +1331,16 @@ X-RateLimit-Reset: 1709891234</code></pre>
         <div class="code-block">
           <div class="code-block-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
           <pre><code class="language-json">{
-  "audit_id": "aud_e5f6g7h8",
+  "audit_id": "audit_e5f6g7h8",
   "transaction_id": "txn_a1b2c3d4",
-  "from_agent": "agent_a1b2c3d4",
-  "to_agent": "agent_e5f6g7h8",
-  "service": "data.fetch",
-  "amount": 24,
-  "currency": "USD_CENTS",
-  "outcome": "SETTLED",
-  "timestamp": "2026-03-08T09:33:24.915Z",
+  "agent_id": "agent_a1b2c3d4",
+  "operation": "TRANSACTION_SETTLED",
+  "resource_type": "TRANSACTION",
+  "resource_id": "txn_a1b2c3d4",
+  "amount": 5,
+  "currency": "USD",
+  "outcome": "COMPLETED",
+  "timestamp": "2026-03-17T19:11:19.494Z",
   "immutable": true
 }</code></pre>
         </div>
@@ -1369,7 +1358,8 @@ X-RateLimit-Reset: 1709891234</code></pre>
         <table class="param-table">
           <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><span class="param-name">agent_id</span></td><td><span class="param-type">string</span></td><td class="param-desc">Filter by agent (payer or payee)</td></tr>
+            <tr><td><span class="param-name">agent_id</span></td><td><span class="param-type">string</span></td><td class="param-desc">Filter by agent ID (payer or payee)</td></tr>
+            <tr><td><span class="param-name">operation</span></td><td><span class="param-type">string</span></td><td class="param-desc">Filter by operation type (e.g. <code>TRANSACTION_SETTLED</code>)</td></tr>
             <tr><td><span class="param-name">from_date</span></td><td><span class="param-type">ISO date</span></td><td class="param-desc">Start of date range</td></tr>
             <tr><td><span class="param-name">to_date</span></td><td><span class="param-type">ISO date</span></td><td class="param-desc">End of date range</td></tr>
             <tr><td><span class="param-name">limit</span></td><td><span class="param-type">number</span></td><td class="param-desc">Max records (default 50)</td></tr>
@@ -1622,6 +1612,348 @@ ump.contracts.terminate('ctr_xyz');</code></pre>
       <li><code>@umpledger/sdk</code> npm package</li>
       <li>Live API at <code>api.umpledger.com</code></li>
     </ul>
+  </div>
+
+
+  <!-- ════════════════ LOCAL TESTING ════════════════ -->
+  <div class="page" id="page-local-testing">
+    <div class="page-eyebrow">Integrations</div>
+    <h1 class="page-title">Local Testing Guide</h1>
+    <p class="page-desc">Run the UMP server locally against a live Railway PostgreSQL database. From zero to live API in 10 minutes.</p>
+
+    <div class="callout callout-warn">
+      <span class="callout-icon">⚠️</span>
+      <div>The local server connects to the <strong>live Railway PostgreSQL database</strong>. Data you create locally persists in production. Use <code>POST /ump/v2/demo/reset</code> to wipe all data when needed.</div>
+    </div>
+
+    <h2>1. Prerequisites</h2>
+    <p>Install the following on your machine:</p>
+    <ul>
+      <li><strong>Git</strong> — <a href="https://git-scm.com/download/win" style="color:var(--teal)">git-scm.com/download/win</a></li>
+      <li><strong>Node.js 18+</strong> — <a href="https://nodejs.org" style="color:var(--teal)">nodejs.org</a> (LTS version)</li>
+    </ul>
+
+    <h2>2. Clone &amp; Install</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">git clone https://github.com/umpledger/ump-protocol.git
+cd ump-protocol/ump-server
+npm install</code></pre>
+    </div>
+
+    <h2>3. Fix TypeScript Config</h2>
+    <p>Open <code>tsconfig.json</code> and replace its contents with:</p>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-json">{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "declaration": true,
+    "outDir": "./dist",
+    "noEmitOnError": false,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}</code></pre>
+    </div>
+
+    <h2>4. Create .env File</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">echo DATABASE_URL=postgresql://ump:ump_secure_2026@switchback.proxy.rlwy.net:44264/ump_db > .env
+echo DATABASE_SSL=false >> .env
+echo PORT=3000 >> .env</code></pre>
+    </div>
+
+    <h2>5. Start the Server</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">npx ts-node --transpile-only -r dotenv/config src/server.ts</code></pre>
+    </div>
+    <p>Expected output:</p>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-text">[db] Running migrations...
+[db] Migrations complete.
+{"level":30,"msg":"Server listening at http://0.0.0.0:3000"}
+{"level":30,"msg":"UMP server running on port 3000 with PostgreSQL storage"}</code></pre>
+    </div>
+
+    <h2>6. Health Check</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl http://localhost:3000/health</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-json">{"status":"ok","version":"2.0.0-alpha.1","protocol":"UMP","storage":"postgresql"}</code></pre>
+    </div>
+
+    <h2>7. Register Agents</h2>
+    <p>Each agent gets an auto-created wallet. Any key starting with <code>ump_sk_</code> is accepted during alpha.</p>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash — Credit Check Agent</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl -X POST http://localhost:3000/ump/v2/agents   -H "X-API-Key: ump_sk_test_local"   -H "Content-Type: application/json"   -d '{"name": "Credit Check Agent", "agent_type": "AI_AGENT",
+       "capabilities": ["credit-check", "bureau-query", "score-evaluation"],
+       "authority": {"maxPerTransaction": 10, "maxPerDay": 1000}}'</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash — Fraud Risk Model Agent</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl -X POST http://localhost:3000/ump/v2/agents   -H "X-API-Key: ump_sk_test_local"   -H "Content-Type: application/json"   -d '{"name": "Fraud Risk Model Agent", "agent_type": "AI_AGENT",
+       "capabilities": ["fraud-detection", "risk-scoring", "anomaly-detection"],
+       "authority": {"maxPerTransaction": 10, "maxPerDay": 1000}}'</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash — Income AI Verification Agent</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl -X POST http://localhost:3000/ump/v2/agents   -H "X-API-Key: ump_sk_test_local"   -H "Content-Type: application/json"   -d '{"name": "Income AI Verification Agent", "agent_type": "AI_AGENT",
+       "capabilities": ["income-verification", "document-analysis", "payroll-check"],
+       "authority": {"maxPerTransaction": 10, "maxPerDay": 1000}}'</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash — Loan Pricing Engine Agent</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl -X POST http://localhost:3000/ump/v2/agents   -H "X-API-Key: ump_sk_test_local"   -H "Content-Type: application/json"   -d '{"name": "Loan Pricing Engine Agent", "agent_type": "AI_AGENT",
+       "capabilities": ["loan-pricing", "rate-calculation", "offer-generation"],
+       "authority": {"maxPerTransaction": 50, "maxPerDay": 5000}}'</code></pre>
+    </div>
+    <p>To list all registered agents:</p>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl http://localhost:3000/ump/v2/agents   -H "X-API-Key: ump_sk_test_local"</code></pre>
+    </div>
+
+    <h2>8. Fund Wallets</h2>
+    <p>Replace <code>{wallet_id}</code> with the <code>wallet_id</code> returned from agent registration. Run for each agent.</p>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl -X POST http://localhost:3000/ump/v2/wallets/{wallet_id}/fund   -H "X-API-Key: ump_sk_test_local"   -H "Content-Type: application/json"   -d '{"amount": 100, "currency": "USD"}'</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">json — Response</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-json">{"wallet_id":"wallet_...","balance":100,"currency":"USD","status":"ACTIVE"}</code></pre>
+    </div>
+
+    <h2>9. Create Contracts</h2>
+    <p>Contracts define pricing rules between agents. The loan pipeline flow: Credit Check → Fraud Risk → Income Verification → Loan Pricing.</p>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash — Contract 1: Credit Check → Fraud Risk ($5 flat fee)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl -X POST http://localhost:3000/ump/v2/contracts   -H "X-API-Key: ump_sk_test_local"   -H "Content-Type: application/json"   -d '{"source_agent_id": "agent_2fed540460cb4a5b",
+       "target_agent_id": "agent_85d48935cc74407d",
+       "service_name": "fraud-risk-check",
+       "pricing_rules": [{"primitive": "FLAT_FEE", "amount": 5.00, "currency": "USD"}]}'</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash — Contract 2: Fraud Risk → Income Verification ($5 flat fee)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl -X POST http://localhost:3000/ump/v2/contracts   -H "X-API-Key: ump_sk_test_local"   -H "Content-Type: application/json"   -d '{"source_agent_id": "agent_85d48935cc74407d",
+       "target_agent_id": "agent_3c9b26070180457e",
+       "service_name": "income-verification",
+       "pricing_rules": [{"primitive": "FLAT_FEE", "amount": 5.00, "currency": "USD"}]}'</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash — Contract 3: Income Verification → Loan Pricing ($5 flat fee)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl -X POST http://localhost:3000/ump/v2/contracts   -H "X-API-Key: ump_sk_test_local"   -H "Content-Type: application/json"   -d '{"source_agent_id": "agent_3c9b26070180457e",
+       "target_agent_id": "agent_7204eeb4a2ce4aec",
+       "service_name": "loan-pricing",
+       "pricing_rules": [{"primitive": "FLAT_FEE", "amount": 5.00, "currency": "USD"}]}'</code></pre>
+    </div>
+
+    <h2>10. Execute Transactions</h2>
+    <p>Replace <code>contract_id</code> values with those returned from Step 9.</p>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash — Transaction 1: Credit Check pays Fraud Risk</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl -X POST http://localhost:3000/ump/v2/transact   -H "X-API-Key: ump_sk_test_local"   -H "Content-Type: application/json"   -d '{"from": "agent_2fed540460cb4a5b",
+       "to": "agent_85d48935cc74407d",
+       "contract_id": "contract_88ecfd5b034e4542",
+       "service": "fraud-risk-check",
+       "payload": {"application_id": "loan_app_001"}}'</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">json — Response</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-json">{
+  "transaction_id": "txn_...",
+  "cost": 5,
+  "currency": "USD",
+  "outcome": "COMPLETED",
+  "audit_id": "audit_...",
+  "settled_at": "2026-03-17T19:11:19.494Z",
+  "duration_ms": 0
+}</code></pre>
+    </div>
+
+    <h2>11. Query the Audit Trail</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash — Fetch all records</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl http://localhost:3000/ump/v2/audit   -H "X-API-Key: ump_sk_test_local"</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash — Filter by agent</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl "http://localhost:3000/ump/v2/audit?agent_id=agent_2fed540460cb4a5b"   -H "X-API-Key: ump_sk_test_local"</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash — Filter by operation</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl "http://localhost:3000/ump/v2/audit?operation=TRANSACTION_SETTLED"   -H "X-API-Key: ump_sk_test_local"</code></pre>
+    </div>
+
+    <h2>12. Check Wallet Balances</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl http://localhost:3000/ump/v2/wallets/{wallet_id}/balance   -H "X-API-Key: ump_sk_test_local"</code></pre>
+    </div>
+    <p>Expected balances after one full pipeline run:</p>
+    <table class="param-table" style="margin-top:1rem">
+      <thead><tr><th>Agent</th><th>Expected Balance</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td class="param-desc">Credit Check Agent</td><td><span class="param-name">$95.00</span></td><td class="param-desc">Spent $5.00</td></tr>
+        <tr><td class="param-desc">Fraud Risk Model Agent</td><td><span class="param-name">$100.00</span></td><td class="param-desc">Received $5.00, spent $5.00</td></tr>
+        <tr><td class="param-desc">Income AI Verification Agent</td><td><span class="param-name">$100.00</span></td><td class="param-desc">Received $5.00, spent $5.00</td></tr>
+        <tr><td class="param-desc">Loan Pricing Engine Agent</td><td><span class="param-name">$105.00</span></td><td class="param-desc">Received $5.00, net earner</td></tr>
+      </tbody>
+    </table>
+
+    <h2>13. Reset Demo Data</h2>
+    <div class="callout callout-warn">
+      <span class="callout-icon">⚠️</span>
+      <div>This runs <code>TRUNCATE ... CASCADE</code> on all 7 database tables including the live production database. Use with caution.</div>
+    </div>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl -X POST http://localhost:3000/ump/v2/demo/reset   -H "X-API-Key: ump_sk_test_local"</code></pre>
+    </div>
+
+    <h2>Quick Reference: All Endpoints</h2>
+    <table class="param-table" style="margin-top:1rem">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><span class="param-type">GET</span></td><td><span class="param-name">/health</span></td><td class="param-desc">Health check (no auth required)</td></tr>
+        <tr><td><span class="param-type">GET</span></td><td><span class="param-name">/ump/v2/agents</span></td><td class="param-desc">List all agents</td></tr>
+        <tr><td><span class="param-type">POST</span></td><td><span class="param-name">/ump/v2/agents</span></td><td class="param-desc">Register a new agent</td></tr>
+        <tr><td><span class="param-type">GET</span></td><td><span class="param-name">/ump/v2/agents/:id</span></td><td class="param-desc">Get agent details including wallet_id</td></tr>
+        <tr><td><span class="param-type">POST</span></td><td><span class="param-name">/ump/v2/wallets/:id/fund</span></td><td class="param-desc">Fund a wallet</td></tr>
+        <tr><td><span class="param-type">GET</span></td><td><span class="param-name">/ump/v2/wallets/:id/balance</span></td><td class="param-desc">Get wallet balance</td></tr>
+        <tr><td><span class="param-type">GET</span></td><td><span class="param-name">/ump/v2/wallets/:id/ledger</span></td><td class="param-desc">Get full wallet transaction ledger</td></tr>
+        <tr><td><span class="param-type">POST</span></td><td><span class="param-name">/ump/v2/contracts</span></td><td class="param-desc">Create a contract</td></tr>
+        <tr><td><span class="param-type">GET</span></td><td><span class="param-name">/ump/v2/contracts</span></td><td class="param-desc">List all contracts</td></tr>
+        <tr><td><span class="param-type">POST</span></td><td><span class="param-name">/ump/v2/transact</span></td><td class="param-desc">Execute a transaction</td></tr>
+        <tr><td><span class="param-type">GET</span></td><td><span class="param-name">/ump/v2/audit</span></td><td class="param-desc">Query audit trail (supports ?agent_id= &amp; ?operation=)</td></tr>
+        <tr><td><span class="param-type">POST</span></td><td><span class="param-name">/ump/v2/demo/reset</span></td><td class="param-desc">Wipe all data (use with caution)</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Common Errors &amp; Fixes</h2>
+    <table class="param-table" style="margin-top:1rem">
+      <thead><tr><th>Error</th><th>Cause</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td class="param-desc">Migration failed (no DB)</td><td class="param-desc">.env not loaded</td><td class="param-desc">Use <code>-r dotenv/config</code> flag when starting server</td></tr>
+        <tr><td class="param-desc">TSError: No overload</td><td class="param-desc">TypeScript type error</td><td class="param-desc">Use <code>--transpile-only</code> flag with ts-node</td></tr>
+        <tr><td class="param-desc">ERR_MODULE_NOT_FOUND</td><td class="param-desc">Wrong tsconfig moduleResolution</td><td class="param-desc">Replace tsconfig.json as per Step 3</td></tr>
+        <tr><td class="param-desc">Wallet not found</td><td class="param-desc">Using agent_id instead of wallet_id</td><td class="param-desc">Call <code>GET /agents/:id</code> to get the wallet_id</td></tr>
+        <tr><td class="param-desc">500 Internal Server Error</td><td class="param-desc">DB connection failed</td><td class="param-desc">Check .env DATABASE_URL and Railway proxy status</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ════════════════ MCP INTEGRATION ════════════════ -->
+  <div class="page" id="page-mcp-integration">
+    <div class="page-eyebrow">Integrations</div>
+    <h1 class="page-title">MCP Integration</h1>
+    <p class="page-desc">The UMP MCP server exposes 18 tools directly inside Claude Desktop, Cursor, VS Code, and any MCP-compatible AI assistant. Register agents, execute transactions, query wallets, and manage contracts — without leaving your chat window.</p>
+
+    <h2>Connect in 60 seconds</h2>
+    <p>Add the following to your Claude Desktop <code>claude_desktop_config.json</code>:</p>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">json — Claude Desktop</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-json">{
+  "mcpServers": {
+    "ump": {
+      "url": "https://ump-mcp-production.up.railway.app/mcp",
+      "transport": "http",
+      "headers": { "Authorization": "Bearer YOUR_UMP_KEY" }
+    }
+  }
+}</code></pre>
+    </div>
+
+    <p>For Cursor or VS Code (MCP settings):</p>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">json — Cursor / VS Code</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-json">{
+  "ump": {
+    "url": "https://ump-mcp-production.up.railway.app/mcp",
+    "transport": "http",
+    "headers": { "Authorization": "Bearer YOUR_UMP_KEY" }
+  }
+}</code></pre>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">ℹ️</span>
+      <div>Replace <code>YOUR_UMP_KEY</code> with your API key. Any key starting with <code>ump_sk_</code> is accepted during alpha (e.g. <code>ump_sk_test_local</code>).</div>
+    </div>
+
+    <h2>Available Tools (18)</h2>
+    <table class="param-table" style="margin-top:1rem">
+      <thead><tr><th>Category</th><th>Tool</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="param-desc">Agents</td><td><span class="param-name">ump_register_agent</span></td><td class="param-desc">Register a new agent with name, type, and spending limits</td></tr>
+        <tr><td class="param-desc">Agents</td><td><span class="param-name">ump_get_agent</span></td><td class="param-desc">Get agent details including wallet ID and status</td></tr>
+        <tr><td class="param-desc">Agents</td><td><span class="param-name">ump_list_agents</span></td><td class="param-desc">List all registered agents with optional filters</td></tr>
+        <tr><td class="param-desc">Agents</td><td><span class="param-name">ump_update_authority</span></td><td class="param-desc">Update agent spending limits</td></tr>
+        <tr><td class="param-desc">Agents</td><td><span class="param-name">ump_revoke_agent</span></td><td class="param-desc">Revoke an agent (cascades to children)</td></tr>
+        <tr><td class="param-desc">Wallets</td><td><span class="param-name">ump_get_balance</span></td><td class="param-desc">Get real-time wallet balance</td></tr>
+        <tr><td class="param-desc">Wallets</td><td><span class="param-name">ump_fund_wallet</span></td><td class="param-desc">Add funds to a wallet</td></tr>
+        <tr><td class="param-desc">Wallets</td><td><span class="param-name">ump_get_ledger</span></td><td class="param-desc">View full transaction ledger for a wallet</td></tr>
+        <tr><td class="param-desc">Wallets</td><td><span class="param-name">ump_transfer</span></td><td class="param-desc">Transfer between wallets</td></tr>
+        <tr><td class="param-desc">Wallets</td><td><span class="param-name">ump_freeze_wallet</span></td><td class="param-desc">Emergency freeze a wallet</td></tr>
+        <tr><td class="param-desc">Wallets</td><td><span class="param-name">ump_unfreeze_wallet</span></td><td class="param-desc">Unfreeze a wallet</td></tr>
+        <tr><td class="param-desc">Transactions</td><td><span class="param-name">ump_transact</span></td><td class="param-desc">Execute a full transaction (meter + rate + settle)</td></tr>
+        <tr><td class="param-desc">Transactions</td><td><span class="param-name">ump_get_transaction</span></td><td class="param-desc">Get transaction details by ID</td></tr>
+        <tr><td class="param-desc">Transactions</td><td><span class="param-name">ump_simulate_pricing</span></td><td class="param-desc">Simulate pricing without executing</td></tr>
+        <tr><td class="param-desc">Transactions</td><td><span class="param-name">ump_submit_usage_events</span></td><td class="param-desc">Submit batch usage events</td></tr>
+        <tr><td class="param-desc">Contracts</td><td><span class="param-name">ump_create_contract</span></td><td class="param-desc">Create a contract between two agents</td></tr>
+        <tr><td class="param-desc">Contracts</td><td><span class="param-name">ump_get_contract</span></td><td class="param-desc">Get contract details</td></tr>
+        <tr><td class="param-desc">Contracts</td><td><span class="param-name">ump_list_contracts</span></td><td class="param-desc">List all contracts</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Example Prompts</h2>
+    <div class="callout callout-tip">
+      <span class="callout-icon">💡</span>
+      <div>"Register a new agent called search-bot with a $20/day spending limit"</div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">💡</span>
+      <div>"Show me the last 10 transactions for wallet_8d4b1ef3"</div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">💡</span>
+      <div>"Create a FLAT_FEE contract between agent_a and agent_b for fraud-check at $5 per call"</div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">💡</span>
+      <div>"Execute a transaction from agent_abc to agent_def using contract_xyz for service loan-pricing"</div>
+    </div>
+
+    <h2>MCP Server Health</h2>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash">curl https://ump-mcp-production.up.railway.app/health</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-block-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-json">{
+  "status": "ok",
+  "name": "ump-mcp",
+  "version": "1.0.0",
+  "tools": 18,
+  "transport": "streamable-http",
+  "auth": "per-user Bearer token"
+}</code></pre>
+    </div>
   </div>
 
 </main>
