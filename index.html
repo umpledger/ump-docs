@@ -776,8 +776,25 @@ curl -X POST https://api.umpledger.com/ump/v2/agents \
     <ul>
       <li><strong>FIXED</strong> — one party sets terms, other accepts</li>
       <li><strong>DYNAMIC</strong> — back-and-forth negotiation (propose → counter → accept)</li>
+      <li><strong>AUTONOMOUS</strong> — AI-driven negotiation using one of 21 built-in strategies</li>
       <li><strong>SPOT</strong> — no contract, use default rates</li>
     </ul>
+
+    <h2>Autonomous Negotiation Engine</h2>
+    <p>UMP includes a built-in negotiation engine with <strong>21 strategies across 9 families</strong>. Agents autonomously negotiate contract terms — no human intervention required.</p>
+    <table style="width:100%; border-collapse:collapse; margin:1rem 0;">
+      <tr style="border-bottom:1px solid #333;"><th style="text-align:left; padding:8px;">Family</th><th style="text-align:left; padding:8px;">Strategies</th><th style="text-align:left; padding:8px;">Description</th></tr>
+      <tr style="border-bottom:1px solid #222;"><td style="padding:8px;">Time-Dependent</td><td style="padding:8px;">Boulware, Conceder, Linear, Polynomial</td><td style="padding:8px;">Concession follows mathematical curves over time</td></tr>
+      <tr style="border-bottom:1px solid #222;"><td style="padding:8px;">Behavior-Dependent</td><td style="padding:8px;">Tit-for-Tat + 3 variants</td><td style="padding:8px;">Mirrors opponent's concession behavior</td></tr>
+      <tr style="border-bottom:1px solid #222;"><td style="padding:8px;">Bayesian</td><td style="padding:8px;">Bayesian</td><td style="padding:8px;">Infers opponent's reservation price</td></tr>
+      <tr style="border-bottom:1px solid #222;"><td style="padding:8px;">Reinforcement Learning</td><td style="padding:8px;">RL (Q-learning)</td><td style="padding:8px;">Learns optimal policy through experience</td></tr>
+      <tr style="border-bottom:1px solid #222;"><td style="padding:8px;">Argumentation</td><td style="padding:8px;">Argumentation</td><td style="padding:8px;">Fires arguments with concession percentages</td></tr>
+      <tr style="border-bottom:1px solid #222;"><td style="padding:8px;">Multi-Issue</td><td style="padding:8px;">Multi-Issue</td><td style="padding:8px;">Pareto-improving trades across issues</td></tr>
+      <tr style="border-bottom:1px solid #222;"><td style="padding:8px;">Auction-Based</td><td style="padding:8px;">English, Vickrey, Combinatorial</td><td style="padding:8px;">Ascending, sealed-bid, and bundle auctions</td></tr>
+      <tr style="border-bottom:1px solid #222;"><td style="padding:8px;">BATNA-Aware</td><td style="padding:8px;">BATNA</td><td style="padding:8px;">Walks away if no deal beats best alternative</td></tr>
+      <tr style="border-bottom:1px solid #222;"><td style="padding:8px;">Pressure Detection</td><td style="padding:8px;">Pressure Detection</td><td style="padding:8px;">Detects opponent urgency, adapts pacing</td></tr>
+    </table>
+    <p>Specify a <code>negotiation_strategy</code> when creating a contract (e.g., <code>"BOULWARE"</code>, <code>"REINFORCEMENT_LEARNING"</code>, <code>"AUCTION_ENGLISH"</code>) and the engine handles negotiation autonomously.</p>
 
     <h2>The Transaction Lifecycle</h2>
     <p>A UMP transaction goes through four stages:</p>
